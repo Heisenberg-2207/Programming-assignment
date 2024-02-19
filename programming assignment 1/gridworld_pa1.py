@@ -31,7 +31,7 @@ class GridWorld:
         The goal states for the gridworld where n is the number of goal
         states.
     """
-    def __init__(self, num_rows, num_cols, start_state, goal_states, wind = False):
+    def __init__(self, num_rows, num_cols, start_state, goal_states, wind = False, max_steps = 100):
         self.num_rows = num_rows
         self.num_cols = num_cols
         self.start_state = start_state
@@ -46,6 +46,8 @@ class GridWorld:
         self.r_dead = None
         self.gamma = 1 # default is no discounting
         self.wind = wind
+
+        self.max_steps = max_steps
 
     def add_obstructions(self, obstructed_states=None, bad_states=None, restart_states=None):
 
@@ -184,10 +186,16 @@ class GridWorld:
         return next_state
 
     def reset(self):
+      self.steps = 0
       return int(self.start_state_seq)
 
     def step(self, state, action):
         
+        self.done = False
+        self.steps += 1
+        if self.steps >= self.max_steps:
+            self.done = True
+            
         p, r = 0, np.random.random()
         for next_state in range(self.num_states):
 
@@ -201,9 +209,9 @@ class GridWorld:
           arr = self.P[next_state, :, 3]
           next_next = np.where(arr == np.amax(arr))
           next_next = next_next[0][0]
-          return next_next, self.R[next_next]
+          return next_next, self.R[next_next], self.done
         else:
-          return next_state, self.R[next_state]
+          return next_state, self.R[next_state], self.done
         
 
 
