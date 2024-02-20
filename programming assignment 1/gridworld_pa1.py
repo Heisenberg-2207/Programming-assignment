@@ -2,6 +2,7 @@ from math import floor
 import numpy as np
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap
 
 DOWN = 1
 UP = 0
@@ -49,51 +50,40 @@ class GridWorld:
 
         self.max_steps = max_steps
 
-    def render_world(self):
+
+    def render_world(self, state = -1, message = "Gridworld"):
         matrix = np.zeros((10, 10)) 
-
-        matrix[self.obs_states[:, 0], self.obs_states[:, 1]] = 1
-        matrix[self.bad_states[:, 0], self.bad_states[:, 1]] = 2
-        matrix[self.restart_states[:, 0], self.restart_states[:, 1]] = 3
-        matrix[self.goal_states[:, 0], self.goal_states[:, 1]] = 4
-        matrix[self.start_state[:, 0], self.start_state[:, 1]] = 5
-
-        extent = [0, 10, 0, -10]
-        # Plot the matrix with the extent
-        plt.imshow(matrix, cmap='Pastel1', vmin=0, vmax=9, extent=extent)
-
-        # Add grid lines
-        plt.grid(True, color='black', linewidth=2)
-        plt.xticks(np.arange(0, 11, 1))
-        plt.yticks(np.arange(0, -11, -1))
-
-        # Add colorbar legend
-        cbar = plt.colorbar(ticks=[0, 1, 2, 3, 4, 5])
-        cbar.ax.set_yticklabels(['Empty', 'Obstruction', 'Bad State', 'Restart State', 'Goal State', 'Start State'])
-
-        # Show the plot
-        plt.show()
-
-    def render_state(self,state):
-        matrix = np.zeros((10, 10))
         state = seq_to_col_row(state,num_cols=10)
-        matrix[state[0][0],state[0][1]] = 6
+
         matrix[self.obs_states[:, 0], self.obs_states[:, 1]] = 1
         matrix[self.bad_states[:, 0], self.bad_states[:, 1]] = 2
         matrix[self.restart_states[:, 0], self.restart_states[:, 1]] = 3
         matrix[self.goal_states[:, 0], self.goal_states[:, 1]] = 4
         matrix[self.start_state[:, 0], self.start_state[:, 1]] = 5
-        
-        extent = [0, 10, 0, -10]
-        # Plot the matrix with the extent
-        plt.imshow(matrix, cmap='Pastel1', vmin=0, vmax=9, extent=extent)
+        matrix[state[0][0],state[0][1]] = 6
 
-        plt.grid(True, color='black', linewidth=2)
-        plt.xticks(np.arange(0, 11, 1))
-        plt.yticks(np.arange(0, -11, -1))
+        matrix = np.flipud(matrix)
+        plt.figure(figsize=(5,5))
+        plt.title(message)
+        # Define the colors for your custom colormap
+        colors = ['#20908C', '#FFA500', '#BFBF00', '#FF0000', '#FF0000', '#0000FF', '#FFFFFF']
 
-        cbar = plt.colorbar(ticks=[0, 1, 2, 3, 4, 5, 6])
-        cbar.ax.set_yticklabels(['Empty', 'Obstruction', 'Bad State', 'Restart State', 'Goal State', 'Start State','Curr State'])
+        # Create the custom colormap
+        cmap = ListedColormap(colors)
+
+        # Use the custom colormap in your plot
+        plt.pcolor(matrix, edgecolors='k', linewidths=2, cmap=cmap)
+        # Add legend
+        legend_elements = [
+            plt.Rectangle((0, 0), 1, 1, facecolor='#20908C', edgecolor='black', linewidth=2, label='Empty state'),
+            plt.Rectangle((0, 0), 1, 1, facecolor='#FFA500', edgecolor='black', linewidth=2, label='Obstruction'),
+            plt.Rectangle((0, 0), 1, 1, facecolor='#BFBF00', edgecolor='black', linewidth=2, label='Bad State'),
+            plt.Rectangle((0, 0), 1, 1, facecolor='#FF0000', edgecolor='black', linewidth=2, label='Restart State'),
+            plt.Rectangle((0, 0), 1, 1, facecolor='#FF0000', edgecolor='black', linewidth=2, label='Goal State'),
+            plt.Rectangle((0, 0), 1, 1, facecolor='#0000FF', edgecolor='black', linewidth=2, label='Start State'),
+            plt.Rectangle((0, 0), 1, 1, facecolor='#FFFFFF', edgecolor='black', linewidth=2, label='Current State')
+        ]
+        plt.legend(handles=legend_elements, bbox_to_anchor=(1.05, 1), loc='upper left')
         plt.show()
         
 
@@ -324,7 +314,7 @@ def plot_Q(Q, message = "Q plot"):
     
     Q = np.flipud(Q.reshape(10,10,4))
     
-    plt.figure(figsize=(10,10))
+    plt.figure(figsize=(5,5))
     plt.title(message)
     plt.pcolor(Q.max(-1), edgecolors='k', linewidths=2)
     plt.colorbar()
@@ -342,3 +332,5 @@ def plot_Q(Q, message = "Q plot"):
     idx = np.indices(policy.shape)
     plt.quiver(idx[1].ravel()+0.5, idx[0].ravel()+0.5, policyx.ravel(), policyy.ravel(), pivot="middle", color='red')
     plt.show()
+
+
