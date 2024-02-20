@@ -31,7 +31,7 @@ class GridWorld:
         The goal states for the gridworld where n is the number of goal
         states.
     """
-    def __init__(self, num_rows, num_cols, start_state, goal_states, wind = False):
+    def __init__(self, num_rows, num_cols, start_state, goal_states, wind = False, max_steps = 100):
         self.num_rows = num_rows
         self.num_cols = num_cols
         self.start_state = start_state
@@ -47,6 +47,8 @@ class GridWorld:
         self.gamma = 1 # default is no discounting
         self.wind = wind
 
+        self.max_steps = max_steps
+
     def render_world(self):
         matrix = np.zeros((10, 10)) 
         matrix[self.obs_states[:, 0], self.obs_states[:, 1]] = 1
@@ -57,15 +59,15 @@ class GridWorld:
         # Define colors for each element in the matri
         plt.imshow(matrix, cmap='Pastel1', vmin=0, vmax=5)
 
-# Add grid lines
+        # Add grid lines
         plt.grid(True, color='black', linewidth=2)
 
 
-# Add colorbar legend
+        # Add colorbar legend
         cbar = plt.colorbar(ticks=[0, 1, 2, 3, 4, 5])
         cbar.ax.set_yticklabels(['Empty', 'Obstruction', 'Bad State', 'Restart State', 'Goal State', 'Start State'])
 
-# Show the plot
+        # Show the plot
         plt.show()
 
     def render_state(self,state):
@@ -224,9 +226,15 @@ class GridWorld:
         return next_state
 
     def reset(self):
+      self.steps = 0
       return int(self.start_state_seq)
 
     def step(self, state, action):
+        self.done = False
+        self.steps += 1
+        if self.steps >= self.max_steps:
+            self.done = True
+
         
         p, r = 0, np.random.random()
         for next_state in range(self.num_states):
@@ -241,9 +249,9 @@ class GridWorld:
           arr = self.P[next_state, :, 3]
           next_next = np.where(arr == np.amax(arr))
           next_next = next_next[0][0]
-          return next_next, self.R[next_next]
+          return next_next, self.R[next_next], self.done
         else:
-          return next_state, self.R[next_state]
+          return next_state, self.R[next_state], self.done
         
 
 
