@@ -51,17 +51,21 @@ class GridWorld:
 
     def render_world(self):
         matrix = np.zeros((10, 10)) 
+
         matrix[self.obs_states[:, 0], self.obs_states[:, 1]] = 1
         matrix[self.bad_states[:, 0], self.bad_states[:, 1]] = 2
         matrix[self.restart_states[:, 0], self.restart_states[:, 1]] = 3
         matrix[self.goal_states[:, 0], self.goal_states[:, 1]] = 4
         matrix[self.start_state[:, 0], self.start_state[:, 1]] = 5
-        # Define colors for each element in the matri
-        plt.imshow(matrix, cmap='Pastel1', vmin=0, vmax=5)
+
+        extent = [0, 10, 0, -10]
+        # Plot the matrix with the extent
+        plt.imshow(matrix, cmap='Pastel1', vmin=0, vmax=9, extent=extent)
 
         # Add grid lines
         plt.grid(True, color='black', linewidth=2)
-
+        plt.xticks(np.arange(0, 11, 1))
+        plt.yticks(np.arange(0, -11, -1))
 
         # Add colorbar legend
         cbar = plt.colorbar(ticks=[0, 1, 2, 3, 4, 5])
@@ -79,10 +83,14 @@ class GridWorld:
         matrix[self.restart_states[:, 0], self.restart_states[:, 1]] = 3
         matrix[self.goal_states[:, 0], self.goal_states[:, 1]] = 4
         matrix[self.start_state[:, 0], self.start_state[:, 1]] = 5
-        # Define colors for each element in the matri
-        plt.imshow(matrix, cmap='Pastel1', vmin=0, vmax=5)
+        
+        extent = [0, 10, 0, -10]
+        # Plot the matrix with the extent
+        plt.imshow(matrix, cmap='Pastel1', vmin=0, vmax=9, extent=extent)
 
         plt.grid(True, color='black', linewidth=2)
+        plt.xticks(np.arange(0, 11, 1))
+        plt.yticks(np.arange(0, -11, -1))
 
         cbar = plt.colorbar(ticks=[0, 1, 2, 3, 4, 5, 6])
         cbar.ax.set_yticklabels(['Empty', 'Obstruction', 'Bad State', 'Restart State', 'Goal State', 'Start State','Curr State'])
@@ -235,6 +243,8 @@ class GridWorld:
         if self.steps >= self.max_steps:
             self.done = True
 
+        if state in self.goal_states_seq:
+            self.done = True
         
         p, r = 0, np.random.random()
         for next_state in range(self.num_states):
