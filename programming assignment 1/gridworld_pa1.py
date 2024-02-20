@@ -195,6 +195,7 @@ class GridWorld:
         self.steps += 1
         if self.steps >= self.max_steps:
             self.done = True
+
             
         p, r = 0, np.random.random()
         for next_state in range(self.num_states):
@@ -272,7 +273,7 @@ def world(world_num):
 
 def plot_Q(Q, message = "Q plot"):
     
-    Q = Q.reshape(10,10,4)
+    Q = np.flipud(Q.reshape(10,10,4))
     
     plt.figure(figsize=(10,10))
     plt.title(message)
