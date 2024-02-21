@@ -53,20 +53,21 @@ class GridWorld:
 
     def render_world(self, state = -1, message = "Gridworld"):
         matrix = np.zeros((10, 10)) 
-        state = seq_to_col_row(state,num_cols=10)
 
         matrix[self.obs_states[:, 0], self.obs_states[:, 1]] = 1
         matrix[self.bad_states[:, 0], self.bad_states[:, 1]] = 2
         matrix[self.restart_states[:, 0], self.restart_states[:, 1]] = 3
         matrix[self.goal_states[:, 0], self.goal_states[:, 1]] = 4
         matrix[self.start_state[:, 0], self.start_state[:, 1]] = 5
-        matrix[state[0][0],state[0][1]] = 6
+        if(state != -1): 
+            state = seq_to_col_row(state,num_cols=10)
+            matrix[state[0][0],state[0][1]] = 6
 
         matrix = np.flipud(matrix)
         plt.figure(figsize=(5,5))
         plt.title(message)
         # Define the colors for your custom colormap
-        colors = ['#20908C', '#FFA500', '#BFBF00', '#FF0000', '#FF0000', '#0000FF', '#FFFFFF']
+        colors = ['#20908C', '#FFA500', '#BFBF00', '#FF0000', '#008000', '#0000FF', '#FFFFFF']
 
         # Create the custom colormap
         cmap = ListedColormap(colors)
@@ -79,7 +80,7 @@ class GridWorld:
             plt.Rectangle((0, 0), 1, 1, facecolor='#FFA500', edgecolor='black', linewidth=2, label='Obstruction'),
             plt.Rectangle((0, 0), 1, 1, facecolor='#BFBF00', edgecolor='black', linewidth=2, label='Bad State'),
             plt.Rectangle((0, 0), 1, 1, facecolor='#FF0000', edgecolor='black', linewidth=2, label='Restart State'),
-            plt.Rectangle((0, 0), 1, 1, facecolor='#FF0000', edgecolor='black', linewidth=2, label='Goal State'),
+            plt.Rectangle((0, 0), 1, 1, facecolor='#008000', edgecolor='black', linewidth=2, label='Goal State'),
             plt.Rectangle((0, 0), 1, 1, facecolor='#0000FF', edgecolor='black', linewidth=2, label='Start State'),
             plt.Rectangle((0, 0), 1, 1, facecolor='#FFFFFF', edgecolor='black', linewidth=2, label='Current State')
         ]
@@ -310,11 +311,11 @@ def world(world_num):
                                 bias=0.5)
     return gw.create_gridworld()
 
-def plot_Q(Q, message = "Q plot"):
+def plot_Q(Q, world_num = -1, message = "Q plot"):
     
     Q = np.flipud(Q.reshape(10,10,4))
     
-    plt.figure(figsize=(5,5))
+    plt.figure(figsize=(10,10))
     plt.title(message)
     plt.pcolor(Q.max(-1), edgecolors='k', linewidths=2)
     plt.colorbar()
@@ -331,6 +332,8 @@ def plot_Q(Q, message = "Q plot"):
     policyy = np.vectorize(y_direct)(policy)
     idx = np.indices(policy.shape)
     plt.quiver(idx[1].ravel()+0.5, idx[0].ravel()+0.5, policyx.ravel(), policyy.ravel(), pivot="middle", color='red')
+    
+    plt.savefig('world_' + str(world_num) + '_Q_plot.png')
     plt.show()
 
 
