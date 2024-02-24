@@ -44,6 +44,7 @@ class Solver():
      self.reset()
      self.sarsa()
      self.plot_solver()
+     self.reward_steps()
 
  def reset(self):
         self.Q = self.Q = np.zeros((self.env.num_states, self.env.num_actions))
@@ -167,14 +168,14 @@ class Solver():
 
 
  def reward_steps(self):
-    num_expts = 5
+    num_expts = 3
     reward_avgs = []
     steps_avgs =[]
 
     for i in range(num_expts):
         print("Experiment: %d"%(i+1))
         Q = np.zeros((self.env.num_states, self.env.num_actions))
-        Q, rewards, steps = self.policy(plot_heat=True)
+        Q, rewards, steps = self.algorithm(plot_heat=True)
         reward_avgs.append(rewards)
         steps_avgs.append(steps)
         
@@ -182,4 +183,4 @@ class Solver():
     reward_avgs_std = np.std(reward_avgs, axis=0)
     steps_avgs_mean = np.mean(steps_avgs, axis=0)
     steps_avgs_std = np.std(steps_avgs, axis=0)
-    self.env.performance_plots(self.episodes,reward_avgs_mean,reward_avgs_std,steps_avgs_mean,steps_avgs_std)
+    self.env.performance_plots(self.world_num,self.episodes,reward_avgs_mean,reward_avgs_std,steps_avgs_mean,steps_avgs_std)
