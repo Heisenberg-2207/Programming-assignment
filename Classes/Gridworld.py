@@ -183,23 +183,26 @@ class GridWorld:
                         self.P[state,next_state,:] = 1
         return self
     
-    def performance_plots(self,episodes,reward_avgs_mean,reward_avgs_std,steps_avgs_mean,steps_avgs_std):
+    def performance_plots(self,world_num,episodes,reward_avgs_mean,reward_avgs_std,steps_avgs_mean,steps_avgs_std):
         plt.figure(figsize=(10, 6))
         plt.plot(range(episodes), reward_avgs_mean, label='Reward Avg', color='blue')
         plt.fill_between(range(episodes), reward_avgs_mean - reward_avgs_std, reward_avgs_mean + reward_avgs_std, alpha=0.3, color='blue')
         plt.xlabel('Episode')
         plt.ylabel('Total Reward')
         plt.legend()
+        plt.savefig('world_'+ str(world_num) +'reward_avg.png')
         plt.show()
         plt.figure(figsize=(10, 6))
 
 # Plot mean
         plt.plot(range(episodes), steps_avgs_mean, label='Steps Avg', color='orange')
+        
 # Plot standard deviation as shaded region
         plt.fill_between(range(episodes), steps_avgs_mean - steps_avgs_std, steps_avgs_mean + steps_avgs_std, alpha=0.3, color='orange')
         plt.xlabel('Episode')
         plt.ylabel('Number of steps to Goal')
         plt.legend()
+        plt.savefig('world_'+ str(world_num) +'steps_avg.png')
         plt.show()
 
     def _get_direction(self, action, direction):
