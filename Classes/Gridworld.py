@@ -183,27 +183,10 @@ class GridWorld:
                         self.P[state,next_state,:] = 1
         return self
     
-    def performance_plots(self,world_num,episodes,reward_avgs_mean,reward_avgs_std,steps_avgs_mean,steps_avgs_std):
-        plt.figure(figsize=(10, 6))
-        plt.plot(range(episodes), reward_avgs_mean, label='Reward Avg', color='blue')
-        plt.fill_between(range(episodes), reward_avgs_mean - reward_avgs_std, reward_avgs_mean + reward_avgs_std, alpha=0.3, color='blue')
-        plt.xlabel('Episode')
-        plt.ylabel('Total Reward')
-        plt.legend()
-        plt.savefig('world_'+ str(world_num) +'reward_avg.png')
-        plt.show()
-        plt.figure(figsize=(10, 6))
+    
 
 # Plot mean
-        plt.plot(range(episodes), steps_avgs_mean, label='Steps Avg', color='orange')
         
-# Plot standard deviation as shaded region
-        plt.fill_between(range(episodes), steps_avgs_mean - steps_avgs_std, steps_avgs_mean + steps_avgs_std, alpha=0.3, color='orange')
-        plt.xlabel('Episode')
-        plt.ylabel('Number of steps to Goal')
-        plt.legend()
-        plt.savefig('world_'+ str(world_num) +'steps_avg.png')
-        plt.show()
 
     def _get_direction(self, action, direction):
 
@@ -333,7 +316,7 @@ def world(world_num):
                                 bias=0.5)
     return gw.create_gridworld()
 
-def plot_Q(Q, world_num = -1, message = "Q plot"):
+def plot_Q(Q,world_num ,k,  message = "Q plot"):
     
     Q = np.flipud(Q.reshape(10,10,4))
     
@@ -355,7 +338,7 @@ def plot_Q(Q, world_num = -1, message = "Q plot"):
     idx = np.indices(policy.shape)
     plt.quiver(idx[1].ravel()+0.5, idx[0].ravel()+0.5, policyx.ravel(), policyy.ravel(), pivot="middle", color='red')
     
-    plt.savefig('world_' + str(world_num) + '_Q_plot.png')
+    plt.savefig('world_' + str(world_num)+k.__name__ + '_Q_plot.png')
     plt.show()
 
 
