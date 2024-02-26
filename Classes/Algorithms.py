@@ -34,8 +34,8 @@ class Solver():
 
 
 
- def choose_action_softmax(self,state, rg=rg):
-        action_probs = softmax(self.Q[state])
+ def choose_action_softmax(self,state, tau = 1, rg=rg):
+        action_probs = softmax(self.Q[state]/tau)
         return rg.choice(len(actions), p=action_probs)
  
  def solve(self,policy,algorithm):
