@@ -61,6 +61,7 @@ class Solver():
         
  def performance_plots(self,world_num,episodes,reward_avgs_mean,reward_avgs_std,steps_avgs_mean,steps_avgs_std):
         
+        #reward plot
         plt.figure(figsize=(10, 6))
         plt.plot(range(episodes), reward_avgs_mean, label='Reward Avg', color='blue')
         plt.fill_between(range(episodes), reward_avgs_mean - reward_avgs_std, reward_avgs_mean + reward_avgs_std, alpha=0.3, color='blue')
@@ -69,51 +70,33 @@ class Solver():
         plt.legend()
         plt.savefig('world_'+ str(world_num)+"_"+self.algorithm.__name__ +'_reward_avg.png')
         plt.show()
+        
+        #steps plot
         plt.figure(figsize=(10, 6))
         plt.plot(range(episodes), steps_avgs_mean, label='Steps Avg', color='orange')
-        
-# Plot standard deviation as shaded region
         plt.fill_between(range(episodes), steps_avgs_mean - steps_avgs_std, steps_avgs_mean + steps_avgs_std, alpha=0.3, color='orange')
         plt.xlabel('Episode')
         plt.ylabel('Number of steps to Goal')
         plt.legend()
         plt.savefig('world_'+ str(world_num)+"_"+self.algorithm.__name__ +'_ steps_avg.png')
+        plt.show()
+        
+        #steps heat map
         self.steps_ = np.round(self.steps_/5,2)
         x = np.reshape(self.steps_, (10, 10))
-
         plt.figure(figsize=(10, 10))
-    # Plot the array with numbers on each cell
+        # Plot the array with numbers on each cell
         plt.imshow(x, cmap='viridis', interpolation='nearest')
-# Add numbers on each cell
+        # Add numbers on each cell
         for i in range(x.shape[0]):
             for j in range(x.shape[1]):
                 plt.text(j, i, x[i, j], ha='center', va='center', color='black')
                 
         plt.savefig('world_' + str(self.world_num)+"_"+self.algorithm.__name__ +'_Visit_count.png')     
            
-        ''' Q = np.flipud(self.Q_avgs.reshape(10,10,4))
-        plt.figure(figsize=(10,10))
-        plt.title("Q plot")
-        plt.pcolor(Q.max(-1), edgecolors='k', linewidths=2)
-        plt.colorbar()
-        def x_direct(a):
-            if a in [UP, DOWN]:
-                return 0
-            return 1 if a == RIGHT else -1
-        def y_direct(a):
-            if a in [RIGHT, LEFT]:
-                return 0
-            return 1 if a == UP else -1
-        policy = Q.argmax(-1)
-        policyx = np.vectorize(x_direct)(policy)
-        policyy = np.vectorize(y_direct)(policy)
-        idx = np.indices(policy.shape)
-        plt.quiver(idx[1].ravel()+0.5, idx[0].ravel()+0.5, policyx.ravel(), policyy.ravel(), pivot="middle", color='red')
-        plt.savefig('world_' + str(self.world_num) + '_Q_plot.png')
-        plt.show() '''
         
     
-#ep greedy
+ #ep greedy
  def choose_action_epsilon(self,state, epsilon= 0.1, rg=rg):
     if not self.Q[state[0], state[1]].any():
         return rg.choice(len(actions))
@@ -229,21 +212,18 @@ class Solver():
 
 
  def reward_steps(self):
-    num_expts = 1
+    num_expts = 5
     reward_avgs = []
     steps_avgs =[]
-    Q_avg = np.zeros((self.env.num_states, self.env.num_actions))
 
     for i in range(num_expts):
         print("Experiment: %d"%(i+1))
         Q = np.zeros((self.env.num_states, self.env.num_actions))
         Q, rewards, steps = self.algorithm(plot_heat=True)
-        Q_avg = np.append(Q_avg,Q)
         reward_avgs.append(rewards)
         steps_avgs.append(steps)
         
     reward_avgs_mean = np.mean(reward_avgs, axis=0)
-    self.Q_avgs = np.mean(Q_avg, axis=0)
     reward_avgs_std = np.std(reward_avgs, axis=0)
     steps_avgs_mean = np.mean(steps_avgs, axis=0)
     steps_avgs_std = np.std(steps_avgs, axis=0)

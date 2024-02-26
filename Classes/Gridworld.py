@@ -184,8 +184,6 @@ class GridWorld:
         return self
     
     
-
-# Plot mean
         
 
     def _get_direction(self, action, direction):
