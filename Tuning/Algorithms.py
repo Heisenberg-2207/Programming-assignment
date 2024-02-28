@@ -95,7 +95,7 @@ class Solver():
         plt.ylabel('Number of steps to Goal')
         plt.legend()
         plt.savefig('world_'+ str(world_num)+"_"+self.algorithm.__name__ +'_ steps_avg.png')
-        self.steps_ = np.round(self.steps_/5,2)
+        self.steps_ = np.round(self.steps_/5000,2)
         x = np.reshape(self.steps_, (10, 10))
 
         plt.figure(figsize=(10, 10))
@@ -133,7 +133,7 @@ class Solver():
     steps_to_completion = np.zeros(self.episodes)
     if plot_heat:
         clear_output(wait=True)
-        #plot_Q(self.Q, world_num,self.algorithm)
+        plot_Q(self.Q, world_num,self.algorithm)
     for ep in tqdm(range(self.episodes)):
         tot_reward, steps = 0, 0
         
@@ -160,11 +160,11 @@ class Solver():
         episode_rewards[ep] = tot_reward
         steps_to_completion[ep] = steps
         
-        #if (ep+1) % print_freq == 0 and plot_heat:
-            #clear_output(wait=True)
-            #plot_Q(self.Q, world_num,self.algorithm, message="Episode %d: Reward: %f, Steps: %.2f, Qmax: %.2f, Qmin: %.2f" % (ep+1, np.mean(episode_rewards[ep-print_freq+1:ep]),
-             #                                                                                np.mean(steps_to_completion[ep-print_freq+1:ep]),
-              #                                                                               self.Q.max(), self.Q.min()))
+        if (ep+1) % print_freq == 0 and plot_heat:
+            clear_output(wait=True)
+            plot_Q(self.Q, world_num,self.algorithm, message="Episode %d: Reward: %f, Steps: %.2f, Qmax: %.2f, Qmin: %.2f" % (ep+1, np.mean(episode_rewards[ep-print_freq+1:ep]),
+                                                                                             np.mean(steps_to_completion[ep-print_freq+1:ep]),
+                                                                                             self.Q.max(), self.Q.min()))
             
     return self.Q, episode_rewards, steps_to_completion
 
@@ -175,9 +175,9 @@ class Solver():
     world_num = self.world_num
     episode_rewards = np.zeros(self.episodes)
     steps_to_completion = np.zeros(self.episodes)
-    #if plot_heat:
-        #clear_output(wait=True)
-        #plot_Q(self.Q, world_num,self.algorithm)
+    if plot_heat:
+        clear_output(wait=True)
+        plot_Q(self.Q, world_num,self.algorithm)
     for ep in tqdm(range(self.episodes)):
         tot_reward, steps = 0, 0
         
@@ -203,11 +203,11 @@ class Solver():
         episode_rewards[ep] = tot_reward
         steps_to_completion[ep] = steps
         
-        #if (ep+1) % print_freq == 0 and plot_heat:
-           # clear_output(wait=True)
-           # plot_Q(self.Q, world_num, message="Episode %d: Reward: %f, Steps: %.2f, Qmax: %.2f, Qmin: %.2f" % (ep+1, np.mean(episode_rewards[ep-print_freq+1:ep]),
-            #                                                                                 np.mean(steps_to_completion[ep-print_freq+1:ep]),
-                                 #                                                            self.Q.max(), self.Q.min()))
+        if (ep+1) % print_freq == 0 and plot_heat:
+            clear_output(wait=True)
+            plot_Q(self.Q, world_num, message="Episode %d: Reward: %f, Steps: %.2f, Qmax: %.2f, Qmin: %.2f" % (ep+1, np.mean(episode_rewards[ep-print_freq+1:ep]),
+                                                                                             np.mean(steps_to_completion[ep-print_freq+1:ep]),
+                                                                                             self.Q.max(), self.Q.min()))
             
     return self.Q, episode_rewards, steps_to_completion
 
@@ -229,7 +229,7 @@ class Solver():
 
 
  def reward_steps(self):
-    num_expts = 1
+    num_expts = 5
     reward_avgs = []
     steps_avgs =[]
     Q_avg = np.zeros((self.env.num_states, self.env.num_actions))
